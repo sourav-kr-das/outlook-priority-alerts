@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Outlook Priority Alert Agent | Interactive Architecture</title>
+<style>
+  :root{--blue:#1167d7;--navy:#102a56;--cyan:#eaf7fb;--line:#d9e5f4;--muted:#60708a;--bg:#f8fbff;--white:#fff;--green:#18a678;--red:#dc4c64;--purple:#6f56d9}
+  *{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#f8fbff,#fff);color:#14213d}
+  .wrap{max-width:1180px;margin:auto;padding:40px 22px 56px}.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid #cfe0f7;border-radius:99px;padding:7px 12px;color:var(--navy);font-weight:700;background:#fff}
+  h1{font-size:clamp(34px,5vw,62px);line-height:1.03;margin:18px 0 10px;color:#0d2c6c}.lead{font-size:18px;color:#627492;max-width:850px;line-height:1.55;margin:0 0 28px}
+  .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:26px 0}.step{border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;min-height:180px;cursor:pointer;box-shadow:0 8px 25px rgba(20,55,95,.06);transition:.2s;position:relative}.step:hover,.step.active{transform:translateY(-4px);border-color:#68a9f5;box-shadow:0 14px 32px rgba(17,103,215,.14)}
+  .num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:#fff;font-weight:800}.step h3{font-size:16px;color:var(--navy);margin:12px 0 5px}.step p{font-size:13px;color:var(--muted);margin:0}.icon{font-size:42px;margin-top:19px}.arrow{position:absolute;right:-12px;top:82px;z-index:2;color:var(--blue);font-size:22px;font-weight:900}
+  .automation{border:1px dashed #70a9e8;background:#eef6ff;border-radius:16px;padding:13px 18px;text-align:center;color:#1355a6;font-weight:700;margin:2px auto 25px;max-width:480px}
+  .detail{display:grid;grid-template-columns:1.25fr .75fr;gap:22px;border:1px solid var(--line);border-radius:22px;background:#fff;padding:26px;box-shadow:0 12px 35px rgba(20,55,95,.07)}.detail h2{margin:0 0 7px;color:var(--navy);font-size:26px}.detail .kicker{color:var(--blue);font-weight:800;margin-bottom:10px}.detail p{font-size:16px;line-height:1.65;color:#43536b}.badge{display:inline-block;background:#eef6ff;color:#155aab;border-radius:99px;padding:7px 10px;margin:4px 5px 0 0;font-size:12px;font-weight:700}.example{background:linear-gradient(135deg,#f1f8ff,#edfdf7);border-radius:16px;padding:18px;border:1px solid #d9eee6}.example h4{margin:0 0 10px;color:#154066}.example pre{white-space:pre-wrap;margin:0;font:13px/1.55 Consolas,monospace;color:#24425e}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px}.nav button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}.prev{background:#edf2f7;color:#29415f}.next{background:var(--blue);color:#fff}.progress{height:7px;background:#e7eef7;border-radius:99px;overflow:hidden;margin:20px 0 12px}.bar{height:100%;background:linear-gradient(90deg,#1688ee,#6a5be2);width:16.66%;transition:.25s}.hint{text-align:center;color:#718096;font-size:13px}
+  @media(max-width:900px){.flow{grid-template-columns:repeat(2,1fr)}.arrow{display:none}.detail{grid-template-columns:1fr}}
+  @media(max-width:520px){.flow{grid-template-columns:1fr}.wrap{padding:24px 14px}.step{min-height:135px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="eyebrow">✉ From Inbox to Impact</div>
+  <h1>Outlook Priority Alert Agent</h1>
+  <p class="lead">Explore how Microsoft Graph, Snowflake, Cortex AI, and Twilio work together to detect important Outlook emails and turn AI understanding into an actionable mobile alert.</p>
+
+  <section class="flow" id="flow" aria-label="Interactive architecture steps"></section>
+  <div class="automation">⏱ Snowflake Task · every 15 minutes · fetch → analyze → alert</div>
+  <div class="progress" aria-hidden="true"><div id="bar" class="bar"></div></div>
+  <p class="hint">Select any step to explore the architecture.</p>
+
+  <section class="detail" aria-live="polite">
+    <div>
+      <div id="kicker" class="kicker"></div>
+      <h2 id="title"></h2>
+      <p id="body"></p>
+      <div id="badges"></div>
+      <div class="nav">
+        <button class="prev" id="prev" type="button">← Previous</button>
+        <button class="next" id="next" type="button">Next →</button>
+      </div>
+    </div>
+    <aside class="example">
+      <h4 id="exampleTitle"></h4>
+      <pre id="example"></pre>
+    </aside>
+  </section>
+</main>
+<script>
+(() => {
+const root=document.querySelector('.wrap');
+const steps=[
+ {icon:'📨',title:'Outlook Inbox',sub:'New emails arrive',body:'The pipeline starts with a mailbox receiving routine updates, learning messages, approvals, and urgent escalations. The agent focuses on new mail rather than repeatedly processing the entire inbox.',badges:['Source: Outlook','Incremental processing','Email metadata'],et:'Example',ex:'Weekly Newsletter\nProject Status Update\nURGENT: Production issue'},
+ {icon:'☁️',title:'Microsoft Graph',sub:'Secure mailbox access',body:'Snowflake obtains an app-only OAuth access token and calls Microsoft Graph for the configured mailbox. The client secret is referenced through Snowflake Secrets rather than being hard-coded in the stored procedure.',badges:['OAuth 2.0','Mail.Read','App-only access'],et:'Request path',ex:'Snowflake\n  ↓ OAuth token\nMicrosoft identity platform\n  ↓\nMicrosoft Graph\n  ↓\nOutlook mailbox'},
+ {icon:'❄️',title:'Snowflake',sub:'Store and manage state',body:'New messages are merged into the EMAILS table. The Graph message ID helps avoid duplicate inserts while Snowflake becomes the application state for ingestion, AI results, scores, and notification status.',badges:['EMAILS table','MERGE','VIP lookup'],et:'State stored',ex:'sender\nsubject\npreview\nreceived\nimportance\nAI_RESULT\nSCORE\nSMS_SID'},
+ {icon:'🧠',title:'Cortex AI',sub:'Understand and prioritize',body:'Cortex AI receives contextual email information and returns machine-readable fields. Structured output lets the downstream pipeline act on the AI result instead of merely displaying a generated paragraph.',badges:['score 0-100','category','summary','action'],et:'Structured result',ex:'{\n  "score": 92,\n  "category": "Escalation",\n  "summary": "Immediate review needed",\n  "action": "Investigate and respond"\n}'},
+ {icon:'🔎',title:'Priority Filter',sub:'Apply the decision rule',body:'The pipeline checks the AI score and notification state. In the current design, an unsent email with a score of 80 or higher is eligible for the alert batch. Lower-priority and already-alerted messages do not trigger another SMS.',badges:['Threshold ≥ 80','No duplicate alert','Batch pending mail'],et:'Decision',ex:'Score 25  → no SMS\nScore 62  → no SMS\nScore 92  → send alert\nAlready alerted → skip'},
+ {icon:'📱',title:'Twilio SMS',sub:'Turn insight into action',body:'Snowflake calls Twilio to send one concise notification for the pending high-priority batch. After Twilio accepts the request, the Message SID is recorded so those emails are not alerted again on the next scheduled run.',badges:['Twilio API','One batch alert','Message SID'],et:'Notification',ex:'Priority email alert\n\n3 email(s) require attention.\nHighest score: 92.\nOpen Outlook to review.'}
+];
+let active=0;
+const flow=root.querySelector('#flow');
+steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='step';b.dataset.i=i;b.innerHTML=`<span class="num">${i+1}</span><div class="icon">${s.icon}</div><h3>${s.title}</h3><p>${s.sub}</p>${i<steps.length-1?'<span class="arrow">→</span>':''}`;b.addEventListener('click',()=>render(i));flow.appendChild(b)});
+function render(i){active=Math.max(0,Math.min(steps.length-1,i));const s=steps[active];root.querySelectorAll('.step').forEach((e,j)=>e.classList.toggle('active',j===active));root.querySelector('#kicker').textContent=`Step ${active+1} of ${steps.length} · ${s.sub}`;root.querySelector('#title').textContent=s.title;root.querySelector('#body').textContent=s.body;root.querySelector('#badges').innerHTML=s.badges.map(x=>`<span class="badge">${x}</span>`).join('');root.querySelector('#exampleTitle').textContent=s.et;root.querySelector('#example').textContent=s.ex;root.querySelector('#bar').style.width=`${((active+1)/steps.length)*100}%`;root.querySelector('#prev').disabled=active===0;root.querySelector('#next').disabled=active===steps.length-1;}
+root.querySelector('#prev').addEventListener('click',()=>render(active-1));root.querySelector('#next').addEventListener('click',()=>render(active+1));render(0);
+})();
+</script>
+</body>
+</html>
